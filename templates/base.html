@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaludPlus - Sistema de Gestión de Clínicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* Estilos para la página de bienvenida */
+        .welcome-page {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://media.istockphoto.com/id/628823308/es/foto/edificio-del-hospital-con-gran-simb%C3%B3lico-en-el-d%C3%ADa-nublado.jpg?s=612x612&w=0&k=20&c=VK5kUWT-e76J9CxK8_20PccEqsxANC1GafJDofwGoHs=');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .hospital-icon {
+            font-size: 4rem;
+            color: #007bff88;
+            margin-bottom: 1rem;
+        }
+        .btn-welcome {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            margin: 10px;
+        }
+
+        /* Estilos para el login */
+        .login-page {
+            background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.137)), 
+                        url('https://static.enfermeria21.com/wp-content/uploads/ddimport/2016/12/general_entrada.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .login-card-header {
+            background: linear-gradient(135deg, #1a6bb3, #0d4d8c);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .login-card-body {
+            padding: 2rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e1e5eb;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #1a6bb3;
+            box-shadow: 0 0 0 0.2rem rgba(26, 107, 179, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1a6bb3, #0d4d8c);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 107, 179, 0.4);
+        }
+        
+        .hospital-icon-sm {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos para el dashboard */
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .table-actions {
+            white-space: nowrap;
+        }
+
+        /* Estilos para las opciones de contacto */
+        .contact-options {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .contact-option {
+            display: block;
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #333;
+        }
+        .contact-option:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    {% if not current_user.is_authenticated %}
+        <!-- Usuario NO autenticado -->
+        {% if request.endpoint == 'welcome.index' %}
+        <!-- Página de Bienvenida -->
+        <div class="welcome-page">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="welcome-card text-center">
+                            <div class="hospital-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <h1 class="mb-2">SaludPlus</h1>
+                            <h4 class="text-muted mb-2">Sistema de Gestión clinica</h4>
+                            <p class="lead mb-2">
+                                Bienvenido al sistema integral de gestión médica. 
+                                Acceda al sistema para gestionar pacientes, citas y facturas.
+                            </p>
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('welcome.ingresar') }}" class="btn btn-primary btn-welcome">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Ingresar al Sistema
+                                </a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif request.endpoint == 'welcome.ingresar' or request.endpoint == 'auth.login' %}
+        <!-- Página de Login -->
+        <div class="login-page">
+            <div class="container">
+                {% if request.endpoint == 'welcome.ingresar' %}
+                <a href="{{ url_for('welcome.index') }}" class="btn btn-light" style="position: absolute; top: 20px; left: 20px;">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+                {% endif %}
+                
+                <div class="login-container">
+                    <div class="text-center mb-4">
+                        <h2 class="text-primary"><i class="fas fa-hospital me-2"></i>SaludPlus</h2>
+                    </div>
+                    
+                    <div class="card login-card">
+                        <div class="login-card-header">
+                            <div class="hospital-icon-sm">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <h4 class="card-title mb-0">Iniciar Sesión</h4>
+                            <p class="mb-0 mt-2 opacity-75">Acceso al sistema clinico</p>
+                        </div>
+                        <div class="login-card-body">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            
+                            {% if form %}
+                            <!-- Formulario con WTForms -->
+                            <form method="POST" action="{{ url_for('auth.login') }}">
+                                {{ form.hidden_tag() }}
+                                <div class="mb-3">
+                                    {{ form.username.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-user text-primary"></i></span>
+                                        {{ form.username(class="form-control", placeholder="Ingrese su usuario") }}
+                                    </div>
+                                    {% if form.username.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.username.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.password.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-lock text-primary"></i></span>
+                                        {{ form.password(class="form-control", placeholder="Ingrese su contraseña") }}
+                                    </div>
+                                    {% if form.password.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.password.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="d-grid">
+                                    {{ form.submit(class="btn btn-primary") }}
+                                </div>
+                            </form>
+                            {% else %}
+                            <!-- Formulario simple como fallback -->
+                            <form method="POST" action="{{ url_for('auth.login') }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Usuario</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-user text-primary"></i></span>
+                                        <input type="text" name="username" class="form-control" placeholder="Ingrese su usuario" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-lock text-primary"></i></span>
+                                        <input type="password" name="password" class="form-control" placeholder="Ingrese su contraseña" required>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Ingresar</button>
+                                </div>
+                            </form>
+                            {% endif %}
+                            
+                            <!-- Sección de contacto con administrador -->
+                            <div class="footer-text">
+                                <p>¿Problemas para acceder? 
+                                    <a href="#" class="text-decoration-none" id="contact-link">Contacte al administrador</a>
+                                </p>
+                                <div class="contact-options" id="contact-options">
+                                    <a href="tel:+59178924446" class="contact-option">
+                                        <i class="fas fa-phone me-2"></i>Llamar al administrador 78924446
+                                    </a>
+                                    <a href="https://wa.me/78924446" class="contact-option">
+                                        <i class="fab fa-whatsapp me-2"></i>Contactar por WhatsApp 78924446
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Redireccionar a bienvenida si intenta acceder a otra página -->
+        <script>window.location.href = "{{ url_for('welcome.index') }}";</script>
+        {% endif %}
+
+    {% else %}
+        <!-- Usuario autenticado - Mostrar aplicación normal -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-hospital"></i>
+                    <span class="d-flex align-items-center ms-2" style="font-size: 22px; font-weight: bold;">
+                        SaludPlus
+                    </span>
+                </a>            
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        {% if current_user.rol == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'usuario' in request.endpoint }}" href="{{ url_for('usuario.index') }}">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'especialidad' in request.endpoint }}" href="{{ url_for('especialidad.index') }}">
+                                <i class="fas fa-stethoscope"></i> Especialidades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'servicio' in request.endpoint }}" href="{{ url_for('servicio.index') }}">
+                                <i class="fas fa-procedures"></i> Servicios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'configuracion' in request.endpoint }}" href="{{ url_for('configuracion.index') }}">
+                                <i class="fas fa-cog"></i> Configuración
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'medico' in request.endpoint }}" href="{{ url_for('medico.index') }}">
+                                <i class="fas fa-user-md"></i> Médicos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'paciente' in request.endpoint }}" href="{{ url_for('paciente.index') }}">
+                                <i class="fas fa-user-injured"></i> Pacientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'cita' in request.endpoint }}" href="{{ url_for('cita.index') }}">
+                                <i class="fas fa-calendar-check"></i> Citas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'consulta' in request.endpoint }}" href="{{ url_for('consulta.index') }}">
+                                <i class="fas fa-notes-medical"></i> Consultas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'receta' in request.endpoint }}" href="{{ url_for('receta.index') }}">
+                                <i class="fas fa-prescription"></i> Recetas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'factura' in request.endpoint }}" href="{{ url_for('factura.index') }}">
+                                <i class="fas fa-file-invoice-dollar"></i> Facturas
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i> {{ current_user.username }} ({{ current_user.rol }})
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Mi Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-md-12">
+                    <div class="container-fluid mt-4">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        {% block content %}{% endblock %}
+                    </div>
+                </main>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para el enlace de contacto -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactLink = document.getElementById('contact-link');
+            if (contactLink) {
+                contactLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const options = document.getElementById('contact-options');
+                    if (options) {
+                        options.style.display = options.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
+            }
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

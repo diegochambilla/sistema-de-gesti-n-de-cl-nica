@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-file-invoice-dollar"></i> Detalle de Factura</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Factura</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Número de Factura:</strong> {{ factura.numero_factura }}</p>
+                        <p><strong>Paciente:</strong> {{ factura.paciente.nombre }} {{ factura.paciente.apellido }}</p>
+                        <p><strong>Fecha de Emisión:</strong> {{ factura.fecha_emision.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estado:</strong> 
+                            <span class="badge bg-{{ 'success' if factura.estado == 'pagada' else 'warning' if factura.estado == 'pendiente' else 'danger' }}">
+                                {{ factura.estado }}
+                            </span>
+                        </p>
+                        {% if factura.metodo_pago %}
+                        <p><strong>Método de Pago:</strong> {{ factura.metodo_pago }}</p>
+                        {% endif %}
+                        {% if factura.fecha_pago %}
+                        <p><strong>Fecha de Pago:</strong> {{ factura.fecha_pago.strftime('%Y-%m-%d %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Detalles de la Factura</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle in factura.detalles %}
+                            <tr>
+                                <td>{{ detalle.descripcion }}</td>
+                                <td>{{ detalle.cantidad }}</td>
+                                <td>${{ "%.2f"|format(detalle.precio_unitario) }}</td>
+                                <td>${{ "%.2f"|format(detalle.subtotal) }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No hay detalles registrados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                <td><strong>${{ "%.2f"|format(factura.subtotal) }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Impuesto:</strong></td>
+                                <td><strong>${{ "%.2f"|format(factura.impuesto) }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>${{ "%.2f"|format(factura.total) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

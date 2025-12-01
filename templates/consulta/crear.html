@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-notes-medical"></i> Registrar Consulta</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Consulta</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <!-- ELIMINAR LA LÍNEA CSRF -->
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cita_id" class="form-label">Cita *</label>
+                                <select class="form-select" id="cita_id" name="cita_id" required>
+                                    <option value="">Seleccionar cita...</option>
+                                    {% for cita in citas %}
+                                    <option value="{{ cita.id }}">
+                                        Cita #{{ cita.id }} - {{ cita.paciente.nombre }} {{ cita.paciente.apellido }} 
+                                        con Dr. {{ cita.medico.usuario.username }} 
+                                        ({{ cita.fecha_cita.strftime('%Y-%m-%d %H:%M') }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fecha_consulta" class="form-label">Fecha Consulta *</label>
+                                <input type="datetime-local" class="form-control" id="fecha_consulta" name="fecha_consulta" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="peso" class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="peso" name="peso" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="altura" class="form-label">Altura (cm)</label>
+                                <input type="number" class="form-control" id="altura" name="altura" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="temperatura" class="form-label">Temperatura (°C)</label>
+                                <input type="number" class="form-control" id="temperatura" name="temperatura" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="costo" class="form-label">Costo *</label>
+                                <input type="number" class="form-control" id="costo" name="costo" step="0.01" required value="50.00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="presion_arterial" class="form-label">Presión Arterial</label>
+                        <input type="text" class="form-control" id="presion_arterial" name="presion_arterial" placeholder="120/80">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="sintomas" class="form-label">Síntomas</label>
+                        <textarea class="form-control" id="sintomas" name="sintomas" rows="3" placeholder="Describa los síntomas del paciente..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="diagnostico" class="form-label">Diagnóstico</label>
+                        <textarea class="form-control" id="diagnostico" name="diagnostico" rows="3" placeholder="Diagnóstico médico..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tratamiento" class="form-label">Tratamiento</label>
+                        <textarea class="form-control" id="tratamiento" name="tratamiento" rows="3" placeholder="Tratamiento prescrito..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('consulta.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Consulta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

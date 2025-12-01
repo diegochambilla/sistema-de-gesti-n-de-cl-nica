@@ -1,0 +1,109 @@
+<!-- templates/medico/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1> <i class="fas fa-user-md"></i>Gestión de Médicos</h1>
+        <a href="{{ url_for('medico.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Médico
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Especialidad</th>
+                            <th>N° Colegiado</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medico in medicos %}
+                        <tr>
+                            <td>{{ medico.id }}</td>
+                            <td>
+                                {% if medico.usuario %}
+                                    {{ medico.usuario.username }}
+                                {% else %}
+                                    <span class="text-muted">Sin usuario</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if medico.especialidad %}
+                                    {{ medico.especialidad.nombre }}
+                                {% else %}
+                                    <span class="text-muted">Sin especialidad</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ medico.numero_colegiado or '-' }}</td>
+                            <td>{{ medico.telefono or '-' }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if medico.activo else 'danger' }}">
+                                    {{ 'Activo' if medico.activo else 'Inactivo' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Botón Horarios -->
+                                    <a href="{{ url_for('medico.horarios', medico_id=medico.id) }}" 
+                                       class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-clock"></i> Horarios
+                                    </a>
+                                    
+                                    <!-- Botón Editar -->
+                                    <a href="{{ url_for('medico.edit', id=medico.id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    
+                                    <!-- Botón Desasociar (solo si tiene usuario asociado) -->
+                                    {% if medico.usuario_id %}
+                                        <a href="{{ url_for('medico.disassociate', id=medico.id) }}" 
+                                           class="btn btn-sm btn-outline-warning"
+                                           onclick="return confirm('¿Estás seguro de que quieres desasociar este médico de su usuario?')">
+                                            <i class="fas fa-unlink"></i> Desasociar
+                                        </a>
+                                    {% endif %}
+                                    
+                                    <!-- Botón Eliminar -->
+                                    {% if current_user.rol == 'admin' %}
+                                        <a href="{{ url_for('medico.delete', id=medico.id) }}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('¿Estás seguro de que quieres eliminar este médico?')">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">No hay médicos registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

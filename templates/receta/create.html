@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-prescription-bottle"></i> Crear Receta</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Receta</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <!-- SIN FORM DE WTForms -->
+                    
+                    <div class="mb-3">
+                        <label for="consulta_id" class="form-label">Consulta *</label>
+                        <select class="form-select" id="consulta_id" name="consulta_id" required>
+                            <option value="">Seleccionar consulta...</option>
+                            {% for consulta in consultas %}
+                            <option value="{{ consulta.id }}">
+                                Consulta #{{ consulta.id }} - {{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }} 
+                                ({{ consulta.fecha_consulta.strftime('%Y-%m-%d') }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="medicamento" class="form-label">Medicamento *</label>
+                        <input type="text" class="form-control" id="medicamento" name="medicamento" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dosis" class="form-label">Dosis</label>
+                                <input type="text" class="form-control" id="dosis" name="dosis" placeholder="500mg">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="frecuencia" class="form-label">Frecuencia</label>
+                                <input type="text" class="form-control" id="frecuencia" name="frecuencia" placeholder="Cada 8 horas">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="duracion" class="form-label">Duración</label>
+                                <input type="text" class="form-control" id="duracion" name="duracion" placeholder="7 días">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="instrucciones" class="form-label">Instrucciones</label>
+                        <textarea class="form-control" id="instrucciones" name="instrucciones" rows="3" placeholder="Instrucciones especiales para el paciente..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('receta.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Receta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

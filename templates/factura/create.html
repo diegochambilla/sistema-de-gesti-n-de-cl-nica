@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-file-invoice"></i> Crear Factura</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Factura</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.paciente_id.label(class="form-label") }}
+                                {{ form.paciente_id(class="form-select") }}
+                                {% if form.paciente_id.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.paciente_id.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.numero_factura.label(class="form-label") }}
+                                {{ form.numero_factura(class="form-control", placeholder="FAC-001-2024") }}
+                                {% if form.numero_factura.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.numero_factura.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.fecha_emision.label(class="form-label") }}
+                                {{ form.fecha_emision(class="form-control", type="datetime-local") }}
+                                {% if form.fecha_emision.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.fecha_emision.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.estado.label(class="form-label") }}
+                                {{ form.estado(class="form-select") }}
+                                {% if form.estado.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.estado.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ form.subtotal.label(class="form-label") }}
+                                {{ form.subtotal(class="form-control", step="0.01", value="0.00") }}
+                                {% if form.subtotal.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.subtotal.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ form.impuesto.label(class="form-label") }}
+                                {{ form.impuesto(class="form-control", step="0.01", value="0.00") }}
+                                {% if form.impuesto.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.impuesto.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ form.total.label(class="form-label") }}
+                                {{ form.total(class="form-control", step="0.01", value="0.00") }}
+                                {% if form.total.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.total.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.metodo_pago.label(class="form-label") }}
+                        {{ form.metodo_pago(class="form-select") }}
+                        {% if form.metodo_pago.errors %}
+                        <div class="text-danger">
+                            {% for error in form.metodo_pago.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('factura.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Crear Factura
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    // Establecer fecha y hora actual por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        
+        // Formatear para datetime-local
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+        
+        // Usar el ID correcto del campo WTForms
+        const fechaEmisionField = document.getElementById('{{ form.fecha_emision.id }}');
+        if (fechaEmisionField && !fechaEmisionField.value) {
+            fechaEmisionField.value = formatted;
+        }
+        
+        // Generar número de factura automático si está vacío
+        const numeroFacturaField = document.getElementById('{{ form.numero_factura.id }}');
+        if (numeroFacturaField && !numeroFacturaField.value) {
+            const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            numeroFacturaField.value = `FAC-${randomNum}-${year}`;
+        }
+        
+        // Calcular total automáticamente
+        function calcularTotal() {
+            const subtotal = parseFloat(document.getElementById('{{ form.subtotal.id }}').value) || 0;
+            const impuesto = parseFloat(document.getElementById('{{ form.impuesto.id }}').value) || 0;
+            const total = subtotal + impuesto;
+            document.getElementById('{{ form.total.id }}').value = total.toFixed(2);
+        }
+        
+        document.getElementById('{{ form.subtotal.id }}').addEventListener('input', calcularTotal);
+        document.getElementById('{{ form.impuesto.id }}').addEventListener('input', calcularTotal);
+    });
+</script>
+{% endblock %}
+{% endblock %}

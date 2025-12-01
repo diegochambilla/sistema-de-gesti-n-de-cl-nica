@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><i class="fas fa-clock"></i> Horarios del Médico: {{ medico.usuario.username }}</h1>
+            <a href="{{ url_for('medico.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Agregar Horario</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.dia_semana.label(class="form-label") }}
+                        {{ form.dia_semana(class="form-select") }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.hora_inicio.label(class="form-label") }}
+                                {{ form.hora_inicio(class="form-control", placeholder="08:00") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.hora_fin.label(class="form-label") }}
+                                {{ form.hora_fin(class="form-control", placeholder="17:00") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            {{ form.activo(class="form-check-input") }}
+                            {{ form.activo.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Horarios Registrados</h5>
+            </div>
+            <div class="card-body">
+                {% if horarios %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Horario</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for horario in horarios %}
+                            <tr>
+                                <td>
+                                    {% if horario.dia_semana == 1 %}Lunes
+                                    {% elif horario.dia_semana == 2 %}Martes
+                                    {% elif horario.dia_semana == 3 %}Miércoles
+                                    {% elif horario.dia_semana == 4 %}Jueves
+                                    {% elif horario.dia_semana == 5 %}Viernes
+                                    {% elif horario.dia_semana == 6 %}Sábado
+                                    {% else %}Domingo{% endif %}
+                                </td>
+                                <td>{{ horario.hora_inicio }} - {{ horario.hora_fin }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if horario.activo else 'danger' }}">
+                                        {{ 'Activo' if horario.activo else 'Inactivo' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay horarios registrados para este médico.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

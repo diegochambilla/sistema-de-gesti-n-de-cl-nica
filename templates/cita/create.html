@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-calendar-plus"></i> Programar Cita</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Cita</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <!-- SIN CSRF TOKEN -->
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="paciente_id" class="form-label">Paciente *</label>
+                                <select class="form-select" id="paciente_id" name="paciente_id" required>
+                                    <option value="">Seleccionar paciente...</option>
+                                    {% for paciente in pacientes %}
+                                    <option value="{{ paciente.id }}">
+                                        {{ paciente.nombre }} {{ paciente.apellido }} ({{ paciente.dni }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="medico_id" class="form-label">Médico *</label>
+                                <select class="form-select" id="medico_id" name="medico_id" required>
+                                    <option value="">Seleccionar médico...</option>
+                                    {% for medico in medicos %}
+                                    <option value="{{ medico.id }}">
+                                        Dr. {{ medico.usuario.username }} - {{ medico.especialidad.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fecha_cita" class="form-label">Fecha y Hora *</label>
+                                <input type="datetime-local" class="form-control" id="fecha_cita" name="fecha_cita" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="duracion" class="form-label">Duración (minutos)</label>
+                                <input type="number" class="form-control" id="duracion" name="duracion" value="30" min="15" step="15">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipo_consulta" class="form-label">Tipo de Consulta *</label>
+                                <select class="form-select" id="tipo_consulta" name="tipo_consulta" required>
+                                    <option value="">Seleccionar tipo...</option>
+                                    <option value="primera_vez">Primera Vez</option>
+                                    <option value="control">Control</option>
+                                    <option value="emergencia">Emergencia</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notas" class="form-label">Notas</label>
+                        <textarea class="form-control" id="notas" name="notas" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('cita.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Programar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    // Establecer fecha y hora actual por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        // Agregar 1 hora para que no sea en el pasado
+        now.setHours(now.getHours() + 1);
+        
+        // Formatear para datetime-local
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('fecha_cita').value = formatted;
+    });
+</script>
+{% endblock %}
+{% endblock %}

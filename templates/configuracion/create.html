@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-cog"></i> Crear Configuración</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Configuración</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="clave" class="form-label">Clave *</label>
+                        <input type="text" class="form-control" id="clave" name="clave" required 
+                               placeholder="Ej: nombre_clinica, telefono_contacto, etc.">
+                    </div>
+                    <div class="mb-3">
+                        <label for="valor" class="form-label">Valor *</label>
+                        <textarea class="form-control" id="valor" name="valor" rows="3" required 
+                                  placeholder="Valor de la configuración..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="2" 
+                                  placeholder="Descripción de para qué sirve esta configuración..."></textarea>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('configuracion.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Configuración
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

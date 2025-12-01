@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-edit"></i> Editar Cita</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Editar Información de la Cita</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <!-- SIN CSRF TOKEN -->
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="paciente_id" class="form-label">Paciente *</label>
+                                <select class="form-select" id="paciente_id" name="paciente_id" required>
+                                    <option value="">Seleccionar paciente...</option>
+                                    {% for paciente in pacientes %}
+                                    <option value="{{ paciente.id }}" {% if cita.paciente_id == paciente.id %}selected{% endif %}>
+                                        {{ paciente.nombre }} {{ paciente.apellido }} ({{ paciente.dni }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="medico_id" class="form-label">Médico *</label>
+                                <select class="form-select" id="medico_id" name="medico_id" required>
+                                    <option value="">Seleccionar médico...</option>
+                                    {% for medico in medicos %}
+                                    <option value="{{ medico.id }}" {% if cita.medico_id == medico.id %}selected{% endif %}>
+                                        Dr. {{ medico.usuario.username }} - {{ medico.especialidad.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fecha_cita" class="form-label">Fecha y Hora *</label>
+                                <input type="datetime-local" class="form-control" id="fecha_cita" name="fecha_cita" 
+                                       value="{{ cita.fecha_cita.strftime('%Y-%m-%dT%H:%M') }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="duracion" class="form-label">Duración (minutos)</label>
+                                <input type="number" class="form-control" id="duracion" name="duracion" 
+                                       value="{{ cita.duracion }}" min="15" step="15">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipo_consulta" class="form-label">Tipo de Consulta *</label>
+                                <select class="form-select" id="tipo_consulta" name="tipo_consulta" required>
+                                    <option value="">Seleccionar tipo...</option>
+                                    <option value="primera_vez" {% if cita.tipo_consulta == 'primera_vez' %}selected{% endif %}>Primera Vez</option>
+                                    <option value="control" {% if cita.tipo_consulta == 'control' %}selected{% endif %}>Control</option>
+                                    <option value="emergencia" {% if cita.tipo_consulta == 'emergencia' %}selected{% endif %}>Emergencia</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="programada" {% if cita.estado == 'programada' %}selected{% endif %}>Programada</option>
+                                    <option value="confirmada" {% if cita.estado == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                                    <option value="completada" {% if cita.estado == 'completada' %}selected{% endif %}>Completada</option>
+                                    <option value="cancelada" {% if cita.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notas" class="form-label">Notas</label>
+                        <textarea class="form-control" id="notas" name="notas" rows="3">{{ cita.notas or '' }}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('cita.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Actualizar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

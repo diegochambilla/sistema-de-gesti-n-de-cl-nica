@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-user-md"></i> Registrar Médico</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información del Médico</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.usuario_id.label(class="form-label") }}
+                                {{ form.usuario_id(class="form-select") }}
+                                {% if form.usuario_id.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.usuario_id.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.especialidad_id.label(class="form-label") }}
+                                {{ form.especialidad_id(class="form-select") }}
+                                {% if form.especialidad_id.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.especialidad_id.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.numero_colegiado.label(class="form-label") }}
+                                {{ form.numero_colegiado(class="form-control") }}
+                                {% if form.numero_colegiado.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.numero_colegiado.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.telefono.label(class="form-label") }}
+                                {{ form.telefono(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.direccion.label(class="form-label") }}
+                                {{ form.direccion(class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.fecha_contratacion.label(class="form-label") }}
+                                {{ form.fecha_contratacion(class="form-control", type="date") }}
+                                {% if form.fecha_contratacion.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.fecha_contratacion.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            {{ form.activo(class="form-check-input") }}
+                            {{ form.activo.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('medico.index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><i class="fas fa-procedures"></i> Gestión de Servicios</h1>
+            <a href="{{ url_for('servicio.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Servicio
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Especialidad</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Duración</th>
+                                <th>Activo</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servicio in servicios %}
+                            <tr>
+                                <td>{{ servicio.id }}</td>
+                                <td>{{ servicio.nombre }}</td>
+                                <td>{{ servicio.especialidad.nombre if servicio.especialidad else 'General' }}</td>
+                                <td>{{ servicio.descripcion or 'N/A' }}</td>
+                                <td>${{ "%.2f"|format(servicio.precio) }}</td>
+                                <td>{{ servicio.duracion_estimada or 'N/A' }} min</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if servicio.activo else 'danger' }}">
+                                        {{ 'Sí' if servicio.activo else 'No' }}
+                                    </span>
+                                </td>
+                                <td class="table-actions text-center">
+                                    <a href="{{ url_for('servicio.edit', id=servicio.id) }}" class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('servicio.delete', id=servicio.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este servicio?')" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">No hay servicios registrados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

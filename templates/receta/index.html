@@ -1,0 +1,146 @@
+<!-- templates/receta/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-prescription"></i>Gestión de Recetas</h1>
+        <a href="{{ url_for('receta.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva Receta
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Consulta</th>
+                            <th>Medicamento</th>
+                            <th>Dosis</th>
+                            <th>Frecuencia</th>
+                            <th>Duración</th>
+                            <th>Instrucciones</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for receta in recetas %}
+                        <tr>
+                            <td>{{ receta.id }}</td>
+                            <td>
+                                {% if receta.consulta %}
+                                    Consulta #{{ receta.consulta.id }}
+                                {% else %}
+                                    <span class="text-muted">Sin consulta</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ receta.medicamento }}</td>
+                            <td>{{ receta.dosis or '-' }}</td>
+                            <td>{{ receta.frecuencia or '-' }}</td>
+                            <td>{{ receta.duracion or '-' }}</td>
+                            <td>
+                                {% if receta.instrucciones %}
+                                    {{ receta.instrucciones[:50] }}{% if receta.instrucciones|length > 50 %}...{% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ receta.fecha_creacion.strftime('%d/%m/%Y') if receta.fecha_creacion else '-' }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Botón Ver Detalles -->
+                                    <a href="#" class="btn btn-sm btn-outline-info"
+                                       data-bs-toggle="modal" data-bs-target="#modalReceta{{ receta.id }}">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+                                    
+                                    <!-- Botón Eliminar -->
+                                    {% if current_user.rol in ['admin', 'medico'] %}
+                                        <a href="{{ url_for('receta.delete', id=receta.id) }}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('¿Estás seguro de que quieres eliminar esta receta?')">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Modal para ver detalles -->
+                                <div class="modal fade" id="modalReceta{{ receta.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Detalles de Receta #{{ receta.id }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <strong>Medicamento:</strong><br>
+                                                        {{ receta.medicamento }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <strong>Dosis:</strong><br>
+                                                        {{ receta.dosis or '-' }}
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-md-6">
+                                                        <strong>Frecuencia:</strong><br>
+                                                        {{ receta.frecuencia or '-' }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <strong>Duración:</strong><br>
+                                                        {{ receta.duracion or '-' }}
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-12">
+                                                        <strong>Instrucciones:</strong><br>
+                                                        {{ receta.instrucciones or 'Sin instrucciones específicas' }}
+                                                    </div>
+                                                </div>
+                                                {% if receta.consulta %}
+                                                <div class="row mt-2">
+                                                    <div class="col-12">
+                                                        <strong>Consulta asociada:</strong><br>
+                                                        #{{ receta.consulta.id }} - 
+                                                        {{ receta.consulta.fecha_consulta.strftime('%d/%m/%Y') if receta.consulta.fecha_consulta else 'Sin fecha' }}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center">No hay recetas registradas</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
