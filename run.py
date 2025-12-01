@@ -86,6 +86,39 @@ def create_admin_user():
         db.session.add(admin_user)
         db.session.commit()
         print("✅ Usuario admin creado: admin / admin123")
+# AÑADE ESTO AL FINAL de tu run.py ACTUAL, justo antes de if __name__ == "__main__":
+
+@app.route('/repair-db')
+def repair_database():
+    """Reparar base de datos manualmente."""
+    try:
+        from werkzeug.security import generate_password_hash
+        from models.usuario_model import Usuario
+        
+        # Crear tablas
+        db.create_all()
+        
+        # Crear usuario admin si no existe
+        admin = Usuario.query.filter_by(username='admin').first()
+        if not admin:
+            admin = Usuario(
+                username='admin',
+                email='admin@clinica.com',
+                password=generate_password_hash('admin123'),
+                rol='admin',
+                activo=True
+            )
+            db.session.add(admin)
+            db.session.commit()
+        
+        return '''
+        <h1>✅ Base de datos reparada</h1>
+        <p>Usuario: <strong>admin</strong></p>
+        <p>Contraseña: <strong>admin123</strong></p>
+        <p><a href="/ingresar">Ir al login</a></p>
+        '''
+    except Exception as e:
+        return f'<h1>❌ Error:</h1><pre>{str(e)}</pre>'
 
 if __name__ == "__main__":
     with app.app_context():
