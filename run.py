@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy  # <-- AÑADE ESTO
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import os
 
@@ -11,7 +11,12 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "clave-secreta-muy-segura-aqui"
 
 # Inicializar la base de datos
-db = SQLAlchemy(app)  # <-- CAMBIA ESTO
+db = SQLAlchemy(app)
+
+# PRIMERO Y MÁS IMPORTANTE: Importar TODOS los modelos ANTES de cualquier otra cosa
+# Esto asegura que SQLAlchemy registre los modelos
+import models  # <-- ESTA LÍNEA ES CLAVE
+from models import Usuario  # <-- Importa Usuario para el login_manager
 
 # Configurar Flask-Login
 login_manager = LoginManager()
@@ -20,35 +25,59 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
 
-# Importar modelos DESPUÉS de crear db
-from models.usuario_model import Usuario  # <-- ESTO DEBE IR AQUÍ
-
 # Configurar el loader de usuario
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
 
-# Crear tablas y usuario admin al iniciar
-with app.app_context():
-    db.create_all()
-    print("✓ Tablas de base de datos creadas")
-    
-    # Crear usuario admin por defecto si no existe
-    from werkzeug.security import generate_password_hash
-    
-    admin_user = Usuario.query.filter_by(username='admin').first()
-    if not admin_user:
-        admin_user = Usuario(
-            username='admin',
-            email='admin@clinica.com',
-            password=generate_password_hash('admin123'),
-            rol='admin'
+# SEGUNDO: Crear tablas y usuario admin
+def init_database():
+    """Inicializa la base de datos y crea el usuario admin."""
+    try:
+        # IMPORTANTE: Forzar que SQLAlchemy vea todos los modelos
+        # Esto asegura que todos los modelos estén registrados
+        from models import (
+            Usuario, Medico, Paciente, Especialidad, Cita, 
+            Consulta, Receta, Servicio, Factura, FacturaDetalle,
+            HorarioMedico, Configuracion
         )
-        db.session.add(admin_user)
-        db.session.commit()
-        print("✅ Usuario admin creado: admin / admin123")
+        
+        # Crear todas las tablas
+        db.create_all()
+        print("✓ Tablas de base de datos creadas")
+        
+        # Crear usuario admin por defecto si no existe
+        from werkzeug.security import generate_password_hash
+        
+        admin_user = Usuario.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin_user = Usuario(
+                username='admin',
+                email='admin@clinica.com',
+                password=generate_password_hash('admin123'),
+                rol='admin',
+                activo=True
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+            print("✅ Usuario admin creado: admin / admin123")
+            print("ℹ️ Puedes cambiar la contraseña después de iniciar sesión")
+        else:
+            print("ℹ️ Usuario admin ya existe")
+            
+        # Verificar que las tablas se crearon
+        print(f"ℹ️ Número de tablas creadas: {len(db.metadata.tables)}")
+            
+    except Exception as e:
+        print(f"⚠️ Error al inicializar base de datos: {e}")
+        import traceback
+        traceback.print_exc()
 
-# Importar y registrar blueprints después de inicializar la db y login_manager
+# Inicializar base de datos al iniciar
+with app.app_context():
+    init_database()
+
+# TERCERO: Importar y registrar blueprints
 from controllers.auth_controller import auth_bp
 from controllers.admin_controller import admin_bp
 from controllers.usuario_controller import usuario_bp
