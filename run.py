@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for
-from database import db
+from flask_sqlalchemy import SQLAlchemy  # <-- AÑADE ESTO
 from flask_login import LoginManager
 import os
 
@@ -11,7 +11,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "clave-secreta-muy-segura-aqui"
 
 # Inicializar la base de datos
-db.init_app(app)
+db = SQLAlchemy(app)  # <-- CAMBIA ESTO
 
 # Configurar Flask-Login
 login_manager = LoginManager()
@@ -20,12 +20,33 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
 
-# Configurar el loader de usuario
-from models.usuario_model import Usuario
+# Importar modelos DESPUÉS de crear db
+from models.usuario_model import Usuario  # <-- ESTO DEBE IR AQUÍ
 
+# Configurar el loader de usuario
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
+
+# Crear tablas y usuario admin al iniciar
+with app.app_context():
+    db.create_all()
+    print("✓ Tablas de base de datos creadas")
+    
+    # Crear usuario admin por defecto si no existe
+    from werkzeug.security import generate_password_hash
+    
+    admin_user = Usuario.query.filter_by(username='admin').first()
+    if not admin_user:
+        admin_user = Usuario(
+            username='admin',
+            email='admin@clinica.com',
+            password=generate_password_hash('admin123'),
+            rol='admin'
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+        print("✅ Usuario admin creado: admin / admin123")
 
 # Importar y registrar blueprints después de inicializar la db y login_manager
 from controllers.auth_controller import auth_bp
@@ -66,30 +87,10 @@ def inject_active_path():
 @app.route("/")
 def home():
     return redirect(url_for('auth.login'))
-@app.route('/')
+
+@app.route('/index')
 def index():
     return redirect(url_for('welcome.index'))
 
-# Crear usuario admin por defecto si no existe
-def create_admin_user():
-    from models.usuario_model import Usuario
-    from werkzeug.security import generate_password_hash
-    
-    admin_user = Usuario.query.filter_by(username='admin').first()
-    if not admin_user:
-        admin_user = Usuario(
-            username='admin',
-            email='admin@clinica.com',
-            password=generate_password_hash('admin123'),
-            rol='admin'
-        )
-        db.session.add(admin_user)
-        db.session.commit()
-        print("✅ Usuario admin creado: admin / admin123")
-
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-        create_admin_user()
-      
     app.run(debug=True)
